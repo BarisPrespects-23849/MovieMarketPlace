@@ -1,35 +1,34 @@
 // src/components/MediaCard.jsx
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { usePriceStore, startPriceSimulation } from '../services/priceSimulation';
-import { useStockStore } from '../store/stockStore';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { usePriceStore, startPriceSimulation } from "../services/priceSimulation";
+import { useStockStore } from "../store/stockStore";
 
 const MediaCard = ({ item, mediaType }) => {
   const [quantity, setQuantity] = useState(1);
   const priceData = usePriceStore((state) => state.prices[item.id]);
   const { buyStock, sellStock, portfolio } = useStockStore();
   
-  const currentPrice = priceData?.price || item.price || 7.00;
+  const currentPrice = priceData?.price || item.price || 7.0;
   const priceChange = priceData?.change || 0;
   const ownedShares = portfolio[item.id]?.quantity || 0;
-
-  // Initialize price simulation for this item
+  
   useEffect(() => {
-    const cleanup = startPriceSimulation([item]);
-    return () => clearInterval(cleanup);
+    const intervalId = startPriceSimulation([item]);
+    return () => clearInterval(intervalId);
   }, [item.id]);
-
+  
   const handleBuy = () => {
     if (quantity > 0) {
       buyStock({ ...item, price: currentPrice }, quantity);
-      setQuantity(1); // Reset quantity after purchase
+      setQuantity(1);
     }
   };
 
   const handleSell = () => {
     if (quantity > 0 && ownedShares >= quantity) {
       sellStock({ ...item, price: currentPrice }, quantity);
-      setQuantity(1); // Reset quantity after sale
+      setQuantity(1);
     }
   };
 
@@ -45,21 +44,15 @@ const MediaCard = ({ item, mediaType }) => {
           {item.vote_average?.toFixed(1)}/10
         </div>
       </div>
-      
       <div className="p-4">
         <h3 className="font-semibold mb-2">{item.title}</h3>
-        
         <div className="flex justify-between items-center mb-3">
           <span className="text-xl font-bold">${currentPrice.toFixed(2)}</span>
-          <span className={`${priceChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-            {priceChange >= 0 ? '+' : ''}{Math.abs(priceChange).toFixed(2)}%
+          <span className={`${priceChange >= 0 ? "text-green-500" : "text-red-500"}`}>
+            {priceChange >= 0 ? "+" : ""}{Math.abs(priceChange).toFixed(2)}%
           </span>
         </div>
-
-        <div className="text-sm text-gray-400 mb-3">
-          Owned: {ownedShares} shares
-        </div>
-
+        <div className="text-sm text-gray-400 mb-3">Owned: {ownedShares} shares</div>
         <input
           type="number"
           min="1"
@@ -67,23 +60,22 @@ const MediaCard = ({ item, mediaType }) => {
           onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
           className="w-full bg-gray-700/50 rounded px-3 py-2 mb-3"
         />
-        
         <div className="grid grid-cols-3 gap-2">
-          <button 
+          <button
             onClick={handleBuy}
             className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm"
           >
             Buy
           </button>
-          <button 
+          <button
             onClick={handleSell}
             disabled={ownedShares < quantity}
             className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm disabled:opacity-50"
           >
             Sell
           </button>
-          <Link 
-            to={`/${mediaType}/${item.id}`} 
+          <Link
+            to={`/${mediaType}/${item.id}`}
             className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm text-center"
           >
             Details

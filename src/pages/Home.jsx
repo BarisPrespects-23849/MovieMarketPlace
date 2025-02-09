@@ -6,18 +6,19 @@ import HeroBanner from '../components/HeroBanner';
 import Loading from '../components/Loading';
 
 const Home = () => {
-  const { movies, series, loading } = useRotatingContent();
-  
+  const { movies, series, loading, error } = useRotatingContent();
+
   if (loading) return <Loading />;
+  if (error) return <div className="text-red-500 p-4">{error}</div>;
 
   return (
-    <section>
-      <HeroBanner movie={movies[0]} /> {/* Add hero banner with first movie */}
+    <>
+      <HeroBanner />
       <div className="space-y-8 p-4">
         <MovieList movies={movies} />
         <SeriesList series={series} />
       </div>
-    </section>
+    </>
   );
 };
 

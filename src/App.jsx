@@ -1,3 +1,4 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Suspense } from 'react';
 import StockMarket from './pages/StockMarket';
@@ -10,7 +11,6 @@ import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
 import SearchResults from './pages/SearchResults';
 import SeriesDetails from './pages/SerisDetails';
-
 
 function App() {
   return (

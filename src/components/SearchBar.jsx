@@ -12,7 +12,6 @@ const SearchBar = () => {
   const handleSearch = async (e) => {
     const value = e.target.value;
     setQuery(value);
-
     if (value.length > 2) {
       setLoading(true);
       try {
@@ -49,13 +48,13 @@ const SearchBar = () => {
           className="w-full bg-gray-800 rounded-lg px-4 py-2"
         />
       </form>
-      
+
       {loading && (
         <div className="absolute top-full mt-2 w-full bg-gray-800 rounded-lg p-2 text-center">
           Searching...
         </div>
       )}
-      
+
       {!loading && results.length > 0 && (
         <div className="absolute top-full mt-2 w-full bg-gray-800 rounded-lg shadow-lg z-50">
           {results.slice(0, 5).map((result) => (

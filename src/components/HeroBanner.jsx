@@ -1,4 +1,4 @@
-
+// src/components/HeroBanner.jsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
@@ -11,7 +11,7 @@ const HeroBanner = () => {
     const fetchTrending = async () => {
       try {
         const data = await api.getTrending();
-        setTrending(data[0]); 
+        setTrending(data[0]); // Show the first trending item
       } catch (error) {
         console.error('Error fetching trending:', error);
       } finally {
@@ -37,7 +37,7 @@ const HeroBanner = () => {
       <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
         <h1 className="text-4xl md:text-6xl font-bold mb-4">{trending.title}</h1>
         <Link 
-          to={`/movie/${trending.id}`}
+          to={`/${trending.media_type}/${trending.id}`}
           className="inline-block bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg transition-colors"
         >
           View Details

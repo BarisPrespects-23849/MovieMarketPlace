@@ -1,10 +1,10 @@
+// src/pages/SearchResults.jsx
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useEffect, useState, Suspense } from "react";
-import PropTypes from 'prop-types';
 import api from "../services/api";
-import MediaCard from "../components/MediaCard";
 import Loading from "../components/Loading";
-import ErrorBoundary from "../components/ErrorBoundary";
+import MediaCard from "../components/MediaCard";
+import { startPriceSimulation } from "../services/priceSimulation";
 
 const SearchResults = () => {
   const { query } = useParams();
@@ -13,67 +13,37 @@ const SearchResults = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let isMounted = true;
-    const decodedQuery = decodeURIComponent(query);
-
     const fetchResults = async () => {
       try {
-        const data = await api.search(decodedQuery);
-        if (isMounted) {
-          setResults(data.filter(item => 
-            item.media_type === 'movie' || item.media_type === 'tv'
-          ));
-        }
+        const data = await api.searchMovies(query);
+        setResults(data);
+        // Start dynamic pricing simulation for these items.
+        startPriceSimulation(data);
       } catch (err) {
-        if (isMounted) {
-          setError(err.message);
-        }
+        console.error("Error fetching search results:", err);
+        setError("Failed to fetch search results");
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
 
     fetchResults();
-    return () => {
-      isMounted = false;
-    };
   }, [query]);
 
   if (loading) return <Loading />;
-  if (error) return <div className="text-red-500 p-4" role="alert">Error: {error}</div>;
-
-  const decodedQuery = decodeURIComponent(query);
+  if (error) return <div className="text-red-500 p-4">{error}</div>;
+  if (!results.length)
+    return <div className="p-4">No results found for "{query}"</div>;
 
   return (
-    <main className="pt-20 px-4 min-h-screen bg-gray-900">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold text-white">
-          Search Results for "{decodedQuery}"
-        </h1>
-      </header>
-      
-      <ErrorBoundary>
-        <Suspense fallback={<Loading />}>
-          {results.length > 0 ? (
-            <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {results.map(item => (
-                <MediaCard
-                  key={item.id}
-                  item={item}
-                  mediaType={item.media_type}
-                />
-              ))}
-            </section>
-          ) : (
-            <p className="text-gray-400 text-center py-20">
-              No results found for "{decodedQuery}"
-            </p>
-          )}
-        </Suspense>
-      </ErrorBoundary>
-    </main>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Search Results for "{query}"</h1>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {results.map((item) => (
+          <MediaCard key={item.id} item={item} mediaType={item.media_type} />
+        ))}
+      </div>
+    </div>
   );
 };
 
