@@ -141,12 +141,3 @@ src/
 - **Backend Integration:** Integrate a backend service for real-time trading data and transaction history.
 - **Optimized Performance:** Improve state management and interval management for even smoother updates.
 
-## License
-
-[MIT License](LICENSE)
-
----
-
-This README should serve as a guide both for developers wanting to understand your thought process and for users who want to know what the site does, how it works, and how to run it. Enjoy building your Movie Marketplace Web App!
-
----
