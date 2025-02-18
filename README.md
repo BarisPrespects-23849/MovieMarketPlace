@@ -16,7 +16,6 @@ A dynamic movie marketplace built using React, TMDB API, Zustand for state manag
 - [Challenges and Thought Process](#challenges-and-thought-process)
 - [Usage](#usage)
 - [Future Improvements](#future-improvements)
-- [License](#license)
 
 ## Overview
 
